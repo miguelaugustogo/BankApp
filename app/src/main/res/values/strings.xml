@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">BankApp</string>
+<!-- common -->
+    <string name="check_connection">Verifique sua conexão</string>
+
+<!-- login   -->
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="user">User</string>
+
+<!--  dashboard  -->
+    <string name="conta">Conta</string>
+    <string name="recentes">Recentes</string>
+    <string name="saldo">Saldo</string>
+    <string name="pagamento">Pagamento</string>
+    <string name="networkstatus">NetWork Status</string>
+    <string name="bank">Bank</string>
+    <string name="logout">Logout</string>
+</resources>
