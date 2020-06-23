@@ -11,10 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.R;
+import com.augustogo.bankapp.config.BaseCallback;
 import com.augustogo.bankapp.domain.Spending;
 import com.augustogo.bankapp.domain.UserAccount;
 import com.augustogo.bankapp.ui.DialogApp;
@@ -24,9 +26,8 @@ import com.augustogo.bankapp.util.CoinUtil;
 
 import java.util.List;
 
-public class DashBoardActivity extends AppCompatActivity implements DashBoardContract.View {
+public class DashBoardActivity extends AppCompatActivity {
 
-    private DashBoardContract.Presenter presenter;
     private TextView textViewNameCustomer;
     private TextView textViewAccount;
     private TextView textViewBalance;
@@ -34,16 +35,31 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
     private RecyclerView recyclerViewDashBoard;
     private UserAccount userAccount;
     private ProgressBar progressBarDashBoard;
+    private DashBoardViewModel dashBoardViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        dashBoardViewModel = new ViewModelProvider(this).get(DashBoardViewModel.class);
         loadUi();
         loadExtras();
         loadActions();
-        presenter = new DashBoardPresenter(this);
-        presenter.loadList(userAccount.getId());
+        dashBoardViewModel.listSpending(userAccount.getId(), new BaseCallback<List<Spending>>() {
+            @Override
+            public void onSuccessful(List<Spending> value) {
+                showProgress(false);
+                listSpent(value);
+            }
+
+            @Override
+            public void onUnsuccessful(String error) {
+                showProgress(false);
+                showError(error);
+            }
+        });
+
     }
 
     private void loadActions() {
@@ -77,12 +93,12 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
         }
     }
 
-    @Override
+
     public void listSpent(List<Spending> value) {
         recyclerViewDashBoard.setAdapter(new AdapterCardDashBoard(this, value));
     }
 
-    @Override
+
     public void showError(String error) {
         if (error.equals(ConstantsApp.NO_CONNECTION))
             DialogApp.showDialogConnection(this);
@@ -90,7 +106,7 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
             Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
+
     public void showProgress(final boolean show) {
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 

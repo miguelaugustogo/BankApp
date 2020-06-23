@@ -6,7 +6,6 @@ import com.augustogo.bankapp.config.Repository;
 import com.augustogo.bankapp.data.remote.StatementsService;
 import com.augustogo.bankapp.data.remote.dto.SpendingDto;
 import com.augustogo.bankapp.domain.Spending;
-import com.augustogo.bankapp.domain.SpendingContract;
 
 import java.util.List;
 
@@ -14,9 +13,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StatementsRepository extends Repository implements SpendingContract.IRepository {
+public class DashBoardRepository extends Repository {
 
-    @Override
+
     public void listStatements(long idUser,final BaseCallback<List<Spending>> onResult) {
         super.data.restApi(StatementsService.class).spendingList(idUser)
                 .enqueue(new Callback<SpendingDto>() {

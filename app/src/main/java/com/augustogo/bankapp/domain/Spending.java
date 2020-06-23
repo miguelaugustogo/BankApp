@@ -2,13 +2,14 @@ package com.augustogo.bankapp.domain;
 
 import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.config.BaseCallback;
+import com.augustogo.bankapp.data.repository.DashBoardRepository;
 
 import java.util.List;
 
 public class
 Spending {
 
-    private SpendingContract.IRepository repository;
+    private DashBoardRepository repository;
     private String typeTransaction;
     private String description;
     private String date;
@@ -23,7 +24,7 @@ Spending {
         this.value = value;
     }
 
-    public void setRepository(SpendingContract.IRepository repository) {
+    public void setRepository(DashBoardRepository repository) {
         this.repository = repository;
     }
 

@@ -1,7 +1,7 @@
 package com.augustogo.bankapp.domain;
 
 import com.augustogo.bankapp.config.BaseCallback;
-import com.augustogo.bankapp.data.repository.StatementsRepository;
+import com.augustogo.bankapp.data.repository.DashBoardRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SpendingTest  {
     @Mock
-    private StatementsRepository repository;
+    private DashBoardRepository repository;
     @Mock
     private Spending spending;
 

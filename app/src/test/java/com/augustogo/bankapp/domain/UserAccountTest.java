@@ -1,7 +1,8 @@
 package com.augustogo.bankapp.domain;
 
 import com.augustogo.bankapp.config.BaseCallback;
-import com.augustogo.bankapp.ui.login.LoginContract;
+import com.augustogo.bankapp.ui.login.LoginActivity;
+import com.augustogo.bankapp.data.repository.LoginRepository;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,9 +16,9 @@ import org.mockito.MockitoAnnotations;
 public class UserAccountTest {
 
     @Mock
-    private LoginContract.View view;
+    private LoginActivity view;
     @Mock
-    private UserAccountContract.IRepository repository;
+    private LoginRepository repository;
     @Mock
     private UserAccount userAccount;
 

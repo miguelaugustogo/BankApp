@@ -49,6 +49,7 @@ public class LoginDto {
     }
 
     public com.augustogo.bankapp.domain.UserAccount toDomain() {
+
         return new com.augustogo.bankapp.domain.UserAccount(userId, name, bankAccount, agency, balance);
     }
 }

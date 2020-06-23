@@ -4,12 +4,13 @@ import android.content.Context;
 
 import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.config.BaseCallback;
+import com.augustogo.bankapp.data.repository.LoginRepository;
 
 import java.io.Serializable;
 
 public class UserAccount implements Serializable {
 
-    private UserAccountContract.IRepository repository;
+    private LoginRepository repository;
     private Long id;
     private String name;
     private String bankAccount;
@@ -18,9 +19,6 @@ public class UserAccount implements Serializable {
 
     private String username;
     private String password;
-
-    public UserAccount() {
-    }
 
     public UserAccount(Long id, String name, String bankAccount, String agency, Double balance) {
         this.id = id;
@@ -35,7 +33,7 @@ public class UserAccount implements Serializable {
         this.password = password;
     }
 
-    public void setRepository(UserAccountContract.IRepository repository) {
+    public void setRepository(LoginRepository repository) {
         this.repository = repository;
     }
 

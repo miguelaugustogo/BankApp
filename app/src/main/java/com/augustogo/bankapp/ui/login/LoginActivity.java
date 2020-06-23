@@ -1,12 +1,14 @@
 package com.augustogo.bankapp.ui.login;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,54 +21,83 @@ import android.widget.Toast;
 
 import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.R;
+import com.augustogo.bankapp.config.BaseCallback;
 import com.augustogo.bankapp.domain.UserAccount;
 import com.augustogo.bankapp.ui.DialogApp;
 import com.augustogo.bankapp.ui.dashboard.DashBoardActivity;
 
-public class LoginActivity extends AppCompatActivity implements LoginContract.View {
+public class LoginActivity extends AppCompatActivity {
 
     public static final String USER_ACCOUNT = "userAccount";
-    private LoginContract.Presenter presenter;
     private EditText editTextUsername;
     private EditText editTextPassword;
     Button buttonLogin;
     private ProgressBar progressLogin;
+    private LoginViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        presenter = new LoginPresenter(this);
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+
         loadUi();
         loadActions();
-        presenter.loadPreference();
+        loginViewModel.loadPreference(this, new BaseCallback<UserAccount>() {
+            @Override
+            public void onSuccessful(UserAccount value) {
+                setPreferences(value);
+            }
+
+            @Override
+            public void onUnsuccessful(String error) {
+                Log.e("SHARED_PREFERENCES ", error);
+            }
+        });
     }
 
     private void loadActions() {
 
-        editTextPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 
-                if (i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_NULL) {
-                presenter.login(editTextUsername.getText().toString().trim(),
-                        editTextPassword.getText().toString().trim());
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .hideSoftInputFromWindow(editTextPassword.getWindowToken(), 0);
-                return true;
-            }
-                return false;
-            }
+        editTextPassword.setOnEditorActionListener((textView, i, keyEvent) -> {
+
+            if (i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_NULL) {
+                loginViewModel.getLogin(editTextUsername.getText().toString().trim(),
+                    editTextPassword.getText().toString().trim(),new BaseCallback<UserAccount>() {
+                    @Override
+                    public void onSuccessful(UserAccount value) {
+                        showProgress(false);
+                        navigationToHome(value);
+                    }
+
+                    @Override
+                    public void onUnsuccessful(String error) {
+                        showProgress(false);
+                        showError(error);
+                    }
+                });
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(editTextPassword.getWindowToken(), 0);
+            return true;
+        }
+            return false;
         });
 
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.login(editTextUsername.getText().toString().trim(),
-                        editTextPassword.getText().toString().trim());
-            }
-        });
+        buttonLogin.setOnClickListener(view -> loginViewModel.getLogin(editTextUsername.getText().toString().trim(),
+                editTextPassword.getText().toString().trim(),new BaseCallback<UserAccount>() {
+                    @Override
+                    public void onSuccessful(UserAccount value) {
+                        showProgress(false);
+                        navigationToHome(value);
+                    }
+
+                    @Override
+                    public void onUnsuccessful(String error) {
+                        showProgress(false);
+                        showError(error);
+                    }
+                }));
 
     }
 
@@ -78,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     }
 
-    @Override
+
     public void navigationToHome(UserAccount userAccount) {
         Intent intent = new Intent(this, DashBoardActivity.class);
         intent.putExtra(USER_ACCOUNT, userAccount);
@@ -86,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         finish();
     }
 
-    @Override
+
     public void showError(String error) {
         if(error.equals(ConstantsApp.NO_CONNECTION))
             DialogApp.showDialogConnection(this);
@@ -94,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
+
     public void showProgress(final boolean show) {
         int shortAnimTime = getResources ().getInteger (android.R.integer.config_shortAnimTime);
 
@@ -117,13 +148,13 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         });
     }
 
-    @Override
+
     public void setPreferences(UserAccount value) {
         editTextUsername.setText(value.getUsername());
         editTextPassword.setText(value.getPassword());
     }
 
-    @Override
+
     public Context getContext() {
         return this;
     }
