@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         }
             return false;
         });
+        
 
         buttonLogin.setOnClickListener(view -> loginViewModel.getLogin(editTextUsername.getText().toString().trim(),
                 editTextPassword.getText().toString().trim(),new BaseCallback<UserAccount>() {
