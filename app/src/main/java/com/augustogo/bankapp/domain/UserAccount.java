@@ -1,7 +1,5 @@
 package com.augustogo.bankapp.domain;
 
-import android.content.Context;
-
 import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.config.BaseCallback;
 import com.augustogo.bankapp.data.repository.LoginRepository;
@@ -12,13 +10,16 @@ public class UserAccount implements Serializable {
 
     private LoginRepository repository;
     private Long id;
-    private String name;
-    private String bankAccount;
-    private String agency;
+    private String name= "";
+    private String bankAccount= "";
+    private String agency= "";
     private Double balance;
 
-    private String username;
-    private String password;
+    private String username= "";
+    private String password= "";
+
+    public UserAccount() {
+    }
 
     public UserAccount(Long id, String name, String bankAccount, String agency, Double balance) {
         this.id = id;
@@ -88,17 +89,17 @@ public class UserAccount implements Serializable {
             return;
         }
 
-        repository.login(username, password, new BaseCallback<UserAccount>() {
-            @Override
-            public void onSuccessful(UserAccount value) {
-                onResult.onSuccessful(value);
-            }
-
-            @Override
-            public void onUnsuccessful(String error) {
-                onResult.onUnsuccessful(error);
-            }
-        });
+//        repository.login(username, password, new BaseCallback<UserAccount>() {
+//            @Override
+//            public void onSuccessful(UserAccount value) {
+//                onResult.onSuccessful(value);
+//            }
+//
+//            @Override
+//            public void onUnsuccessful(String error) {
+//                onResult.onUnsuccessful(error);
+//            }
+//        });
     }
 
     private boolean validPassword() {
@@ -110,17 +111,17 @@ public class UserAccount implements Serializable {
         return username.matches("[0-9]{11}");
     }
 
-    public void loadPreference(Context context,final BaseCallback<UserAccount> onResult) {
-        repository.loadPreference(context, new BaseCallback<UserAccount>() {
-            @Override
-            public void onSuccessful(UserAccount value) {
-                onResult.onSuccessful(value);
-            }
-
-            @Override
-            public void onUnsuccessful(String error) {
-                onResult.onUnsuccessful(error);
-            }
-        });
-    }
+//    public void loadPreference(Context context,final BaseCallback<UserAccount> onResult) {
+//        repository.loadPreference(context, new BaseCallback<UserAccount>() {
+//            @Override
+//            public void onSuccessful(UserAccount value) {
+//                onResult.onSuccessful(value);
+//            }
+//
+//            @Override
+//            public void onUnsuccessful(String error) {
+//                onResult.onUnsuccessful(error);
+//            }
+//        });
+//    }
 }

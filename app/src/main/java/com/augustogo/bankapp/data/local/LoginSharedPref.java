@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-public class LoginSharedPref{
+import androidx.lifecycle.MutableLiveData;
+
+public class LoginSharedPref extends MutableLiveData<LoginSharedPref> {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";

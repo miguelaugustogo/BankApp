@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,23 +43,25 @@ public class DashBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        Log.e("DASHBOARD","");
+
         dashBoardViewModel = new ViewModelProvider(this).get(DashBoardViewModel.class);
         loadUi();
         loadExtras();
         loadActions();
-        dashBoardViewModel.listSpending(userAccount.getId(), new BaseCallback<List<Spending>>() {
-            @Override
-            public void onSuccessful(List<Spending> value) {
-                showProgress(false);
-                listSpent(value);
-            }
-
-            @Override
-            public void onUnsuccessful(String error) {
-                showProgress(false);
-                showError(error);
-            }
-        });
+//        dashBoardViewModel.listSpending(userAccount.getId(), new BaseCallback<List<Spending>>() {
+//            @Override
+//            public void onSuccessful(List<Spending> value) {
+//                showProgress(false);
+//                listSpent(value);
+//            }
+//
+//            @Override
+//            public void onUnsuccessful(String error) {
+//                showProgress(false);
+//                showError(error);
+//            }
+//        });
 
     }
 
@@ -84,12 +87,12 @@ public class DashBoardActivity extends AppCompatActivity {
         if (getIntent().hasExtra(LoginActivity.USER_ACCOUNT)) {
             userAccount = (UserAccount) getIntent()
                     .getSerializableExtra(LoginActivity.USER_ACCOUNT);
-            textViewNameCustomer.setText(userAccount.getName());
-            textViewAccount.setText(String.format("%s / %s",
-                    userAccount.getBankAccount(),
-                    userAccount.getAgency().replaceAll(
-                            "([0-9]{2})([0-9]{6})([0-9])", "$1.$2-$3")));
-            textViewBalance.setText(CoinUtil.formatReal(userAccount.getBalance()));
+                textViewNameCustomer.setText(userAccount.getName());
+                textViewAccount.setText(String.format("%s / %s",
+                        userAccount.getBankAccount(),
+                        userAccount.getAgency().replaceAll(
+                                "([0-9]{2})([0-9]{6})([0-9])", "$1.$2-$3")));
+                textViewBalance.setText(CoinUtil.formatReal(userAccount.getBalance()));
         }
     }
 

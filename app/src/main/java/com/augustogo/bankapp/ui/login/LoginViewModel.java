@@ -2,50 +2,37 @@ package com.augustogo.bankapp.ui.login;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.augustogo.bankapp.ConstantsApp;
-import com.augustogo.bankapp.config.BaseCallback;
 import com.augustogo.bankapp.domain.UserAccount;
 import com.augustogo.bankapp.data.repository.LoginRepository;
+
 
 public class LoginViewModel extends ViewModel {
     LoginRepository loginRepository;
 
+    private MutableLiveData<Boolean> isValidParametersLogin = new MutableLiveData<>();
+    private MutableLiveData<UserAccount> userAccount = new MutableLiveData<>();
 
     public LoginViewModel(){
         loginRepository= new LoginRepository();
     }
-    public void getLogin(String username, String password, final BaseCallback<UserAccount> onResult){
-        if(username.isEmpty()){
-            onResult.onUnsuccessful(ConstantsApp.USER_NULL);
-            return;
-        }
 
-        if(password.isEmpty()){
-            onResult.onUnsuccessful(ConstantsApp.PASSWORD_NULL);
-            return;
-        }
-        if(!validUsername(username)) {
-            onResult.onUnsuccessful(ConstantsApp.USER_INVALID);
-            return;
-        }
-        if(!validPassword(password)){
-            onResult.onUnsuccessful(ConstantsApp.PASSWORD_INVALID);
-            return;
-        }
 
-        loginRepository.login(username, password, new BaseCallback<UserAccount>() {
-            @Override
-            public void onSuccessful(UserAccount value) {
-                onResult.onSuccessful(value);
+    public void login(String username, String password){
+
+        if (!username.isEmpty() && !password.isEmpty()){
+            if (validUsername(username) && validPassword(password)){
+                isValidParametersLogin.setValue(true);
+                userAccount.postValue(loginRepository.login(username, password));
             }
+        }
+//        return userAccountMutableLiveData;
+    }
 
-            @Override
-            public void onUnsuccessful(String error) {
-                onResult.onUnsuccessful(error);
-            }
-        });
+    public LiveData<UserAccount> userAccountLiveData(){
+        return userAccount;
     }
 
     private boolean validPassword(String password) {
@@ -57,17 +44,7 @@ public class LoginViewModel extends ViewModel {
         return username.matches("[0-9]{11}");
     }
 
-    public void loadPreference(Context context, final BaseCallback<UserAccount> onResult) {
-        loginRepository.loadPreference(context, new BaseCallback<UserAccount>() {
-            @Override
-            public void onSuccessful(UserAccount value) {
-                onResult.onSuccessful(value);
-            }
-
-            @Override
-            public void onUnsuccessful(String error) {
-                onResult.onUnsuccessful(error);
-            }
-        });
+    public void loadPreference(Context context) {
+        userAccount.setValue(loginRepository.loadPreference(context));
     }
 }

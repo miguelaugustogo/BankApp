@@ -41,12 +41,12 @@ public class UserAccountTest {
         Mockito.verify(userAccount).login(loadUserCallBack.capture());
     }
 
-    @Test
-    public void loadPreference(){
-        userAccount.setRepository(repository);
-        userAccount.loadPreference(Mockito.eq(view.getContext()), loadUserCallBack.capture());
-        Mockito.verify(userAccount).loadPreference(Mockito.eq(view.getContext()), loadUserCallBack.capture());
-    }
+//    @Test
+//    public void loadPreference(){
+//        userAccount.setRepository(repository);
+//        userAccount.loadPreference(Mockito.eq(view.getContext()), loadUserCallBack.capture());
+//        Mockito.verify(userAccount).loadPreference(Mockito.eq(view.getContext()), loadUserCallBack.capture());
+//    }
 
     @Test(expected = Exception.class)
     public void testRepositoryNull(){
