@@ -2,7 +2,6 @@ package com.augustogo.bankapp.ui;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,11 +22,6 @@ public class DialogApp {
     public static void showDialogConnection(Context context) {
         final Dialog dialog = createDialog (context, R.layout.dialog_connection);
         Button buttonConnection = dialog.findViewById (R.id.button_dialog_connection);
-        buttonConnection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+        buttonConnection.setOnClickListener(view -> dialog.dismiss());
     }
 }

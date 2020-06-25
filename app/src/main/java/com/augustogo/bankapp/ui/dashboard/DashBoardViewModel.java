@@ -1,43 +1,40 @@
 package com.augustogo.bankapp.ui.dashboard;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.config.BaseCallback;
-import com.augustogo.bankapp.domain.Spending;
 import com.augustogo.bankapp.data.repository.DashBoardRepository;
+import com.augustogo.bankapp.domain.Spending;
 
 import java.util.List;
 
 public class DashBoardViewModel extends ViewModel {
 
     DashBoardRepository dashBoardRepository;
+    private MutableLiveData<List<Spending>> listSpending = new MutableLiveData<>();
 
     public DashBoardViewModel(){
-        dashBoardRepository= new DashBoardRepository();
+        super();
+        dashBoardRepository= DashBoardRepository.getInstance();
     }
 
-    public void listSpending(long idUser, final BaseCallback<List<Spending>> onResult){
-
-        if(dashBoardRepository==null){
-            onResult.onUnsuccessful(ConstantsApp.REPOSITORY_NULL);
-            return;
-        }
-        if(idUser<=0){
-            onResult.onUnsuccessful(ConstantsApp.ID_INVALID);
-            return;
-        }
+    public void listSpending(long idUser){
 
         dashBoardRepository.listStatements(idUser, new BaseCallback<List<Spending>>() {
             @Override
             public void onSuccessful(List<Spending> value) {
-                onResult.onSuccessful(value);
+                listSpending.postValue(value);
             }
 
             @Override
             public void onUnsuccessful(String error) {
-                onResult.onUnsuccessful(error);
             }
         });
+    }
+
+    public LiveData<List<Spending>> listSpendingLiveData (){
+        return listSpending;
     }
 }

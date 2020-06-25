@@ -24,10 +24,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 ext {
-    retrofit_version = "2.5.0"
-    retrofit_gson_version = "2.5.0"
+    retrofit_version = "2.7.1"
+    retrofit_gson_version = "2.7.1"
     support_version= "1.1.0"
 }
 
@@ -42,11 +45,19 @@ dependencies {
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_gson_version"
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
+    implementation 'com.squareup.okhttp3:mockwebserver:4.3.1'
 
-    testImplementation 'org.mockito:mockito-core:2.7.22'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    testImplementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.3.1'
+
+    androidTestImplementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.3.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation "android.arch.core:core-testing:1.1.1"
 
 }

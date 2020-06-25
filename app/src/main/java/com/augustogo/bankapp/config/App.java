@@ -5,16 +5,18 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.augustogo.bankapp.data.local.LoginSharedPref;
+
 public class App extends Application {
 
     private static App instance;
-    private static RetrofitFactory retrofitFactory;
+    private static LoginSharedPref sharedPref;
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        retrofitFactory = RetrofitFactory.getInstance();
+        sharedPref = new LoginSharedPref(this);
     }
 
     public static boolean isConected(Context context){
@@ -27,7 +29,7 @@ public class App extends Application {
         return instance;
     }
 
-    public static RetrofitFactory getRetrofitFactory() {
-        return retrofitFactory;
+    public static LoginSharedPref getSharedPref() {
+        return sharedPref;
     }
 }

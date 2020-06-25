@@ -2,7 +2,6 @@ package com.augustogo.bankapp.data.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,7 +15,7 @@ public class LoginSharedPref extends MutableLiveData<LoginSharedPref> {
     private String password;
 
     public LoginSharedPref(Context context) {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPreferences = context.getSharedPreferences("app_pref", 0);
         editor = sharedPreferences.edit();
         username = sharedPreferences.getString(USERNAME, "");
         password = sharedPreferences.getString(PASSWORD, "");

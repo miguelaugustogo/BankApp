@@ -3,14 +3,14 @@ package com.augustogo.bankapp.data.remote.dto;
 import com.augustogo.bankapp.domain.UserAccount;
 
 public class UserAccountDto {
-    private UserAccount userAccount;
+    private LoginDto userAccount;
     private Error error;
 
-    public UserAccount getUserAccount() {
+    public LoginDto getUserAccount() {
         return userAccount;
     }
 
-    public void setUserAccount(UserAccount userAccount) {
+    public void setUserAccount(LoginDto userAccount) {
         this.userAccount = userAccount;
     }
 

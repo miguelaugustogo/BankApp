@@ -1,31 +1,21 @@
 package com.augustogo.bankapp.ui.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.augustogo.bankapp.ConstantsApp;
 import com.augustogo.bankapp.R;
-import com.augustogo.bankapp.config.BaseCallback;
-import com.augustogo.bankapp.data.local.LoginSharedPref;
+import com.augustogo.bankapp.config.App;
 import com.augustogo.bankapp.domain.UserAccount;
 import com.augustogo.bankapp.ui.DialogApp;
 import com.augustogo.bankapp.ui.dashboard.DashBoardActivity;
@@ -44,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Log.v("ACTIVITY 0","");
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
         loadUi();
         loadObserve();
@@ -52,11 +41,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loadObserve() {
-
-//        loginViewModel.loadPreference(this).observe(this, (UserAccount userAccount) -> {
-//            if (userAccount != null) setPreferences(userAccount);
-//            else showError("NOT SHARED PREFERENCES");
-//        });
 
         loginViewModel.userAccountLiveData().observe(this, (UserAccount userAccount) -> {
             if (userAccount != null) navigationToHome(userAccount);
@@ -81,22 +65,29 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(view -> {
             loginViewModel.login(editTextUsername.getText().toString().trim(),
                     editTextPassword.getText().toString().trim());
+            buttonLogin.setEnabled(false);
         });
     }
 
     private void loadUi() {
         editTextUsername = findViewById(R.id.edit_text_username);
         editTextPassword = findViewById(R.id.edit_text_password);
+
+        if (!App.getSharedPref().getUsername().isEmpty()){
+            editTextUsername.setText(App.getSharedPref().getUsername());
+        }
+        if (!App.getSharedPref().getPassword().isEmpty()){
+            editTextPassword.setText(App.getSharedPref().getPassword());
+        }
+
         buttonLogin = findViewById(R.id.button_login);
         progressLogin = findViewById(R.id.progress_login);
     }
 
 
     public void navigationToHome(UserAccount userAccount) {
-        Log.e("ACTIVITY2","NAME "+ userAccount.getName());
-        if (!userAccount.getName().isEmpty()) {
 
-            Log.d("ACTIVITY3","NAME "+ userAccount.getName());
+        if (!userAccount.getName().isEmpty()) {
             Intent intent = new Intent(this, DashBoardActivity.class);
             intent.putExtra(USER_ACCOUNT, userAccount);
             startActivity(intent);
@@ -109,39 +100,5 @@ public class LoginActivity extends AppCompatActivity {
             DialogApp.showDialogConnection(this);
         else
             Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
-    }
-
-
-    public void showProgress(final boolean show) {
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        buttonLogin.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-        buttonLogin.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                buttonLogin.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-            }
-        });
-
-        progressLogin.setVisibility(show ? View.VISIBLE : View.GONE);
-        progressLogin.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                progressLogin.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
-    }
-
-
-    public void setPreferences(UserAccount value) {
-        editTextUsername.setText(value.getUsername());
-        editTextPassword.setText(value.getPassword());
-    }
-
-
-    public Context getContext() {
-        return this;
     }
 }

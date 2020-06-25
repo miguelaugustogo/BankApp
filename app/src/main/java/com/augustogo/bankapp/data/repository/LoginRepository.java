@@ -1,56 +1,51 @@
 package com.augustogo.bankapp.data.repository;
 
-import android.content.Context;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import com.augustogo.bankapp.ConstantsApp;
+import com.augustogo.bankapp.config.App;
 import com.augustogo.bankapp.config.BaseCallback;
-import com.augustogo.bankapp.config.Repository;
-import com.augustogo.bankapp.data.local.LoginSharedPref;
+import com.augustogo.bankapp.config.RetrofitApi;
 import com.augustogo.bankapp.data.remote.LoginService;
+import com.augustogo.bankapp.data.remote.dto.LoginDto;
 import com.augustogo.bankapp.data.remote.dto.UserAccountDto;
 import com.augustogo.bankapp.domain.UserAccount;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginRepository extends Repository {
+public class LoginRepository {
 
-    private static LoginSharedPref sharedPref;
-    UserAccount userAccountMutableLiveData;
+    private static final LoginRepository ourInstance = new LoginRepository();
+    private LoginService service;
 
-    public UserAccount login(final String username, final String password) {
-        super.data.restApi(LoginService.class)
-                .login(username, password)
-                .enqueue(new Callback<UserAccount>() {
-                    @Override
-                    public void onResponse(@NonNull Call<UserAccount> call, @NonNull  Response<UserAccount> response) {
-//                            sharedPref.saveSharedPref(username, password);
-
-                            userAccountMutableLiveData = response.body();
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<UserAccount> call, @NonNull Throwable t) {
-                    }
-                });
-
-        return userAccountMutableLiveData;
+    private LoginRepository() {
+        service = RetrofitApi.create(LoginService.class);
     }
 
-    public UserAccount loadPreference(Context context) {
+    public static LoginRepository getInstance() {
+        return ourInstance;
+    }
 
-        sharedPref = new LoginSharedPref(context);
-        UserAccount userAccount= new UserAccount(sharedPref.getUsername(), sharedPref.getPassword());
-        userAccountMutableLiveData = userAccount;
-        return userAccountMutableLiveData;
+    public void login(final String username, final String password, final BaseCallback<UserAccount> baseCallback) {
+        service.login(username, password).enqueue(new Callback<UserAccountDto>() {
+            @Override
+            public void onResponse(Call<UserAccountDto> call, Response<UserAccountDto> response) {
+                if (response.body().getError().getCode() != 0) {
+                    baseCallback.onUnsuccessful(response.body().getError().getMessage());
+                }else {
+                    App.getSharedPref().saveSharedPref(username, password);
+                    LoginDto accountDto = response.body().getUserAccount();
+                    UserAccount userAccount = new UserAccount(accountDto.getUserId(), accountDto.getName(), accountDto.getBankAccount(), accountDto.getAgency(), accountDto.getBalance());
+                    baseCallback.onSuccessful(userAccount);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserAccountDto> call, @NonNull Throwable t) {
+                baseCallback.onUnsuccessful(t.getMessage());
+            }
+        });
     }
 }
 

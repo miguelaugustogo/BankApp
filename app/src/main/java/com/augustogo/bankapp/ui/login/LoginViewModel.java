@@ -1,37 +1,46 @@
 package com.augustogo.bankapp.ui.login;
 
-import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.augustogo.bankapp.domain.UserAccount;
-import com.augustogo.bankapp.data.repository.LoginRepository;
 
+import com.augustogo.bankapp.config.BaseCallback;
+import com.augustogo.bankapp.data.repository.LoginRepository;
+import com.augustogo.bankapp.domain.UserAccount;
 
 public class LoginViewModel extends ViewModel {
     LoginRepository loginRepository;
 
-    private MutableLiveData<Boolean> isValidParametersLogin = new MutableLiveData<>();
     private MutableLiveData<UserAccount> userAccount = new MutableLiveData<>();
 
-    public LoginViewModel(){
-        loginRepository= new LoginRepository();
+    public LoginViewModel() {
+        super();
+        loginRepository = LoginRepository.getInstance();
     }
 
+    public void login(String username, String password) {
 
-    public void login(String username, String password){
+        if (!username.isEmpty() && !password.isEmpty()) {
+            if (validUsername(username) && validPassword(password)) {
 
-        if (!username.isEmpty() && !password.isEmpty()){
-            if (validUsername(username) && validPassword(password)){
-                isValidParametersLogin.setValue(true);
-                userAccount.postValue(loginRepository.login(username, password));
+                loginRepository.login(username, password, new BaseCallback<UserAccount>() {
+                    @Override
+                    public void onSuccessful(UserAccount value) {
+                        userAccount.postValue(value);
+                        Log.i("LoginViewModel", "USER_ACCOUNT");
+                    }
+
+                    @Override
+                    public void onUnsuccessful(String error) {
+                    }
+                });
             }
         }
-//        return userAccountMutableLiveData;
     }
 
-    public LiveData<UserAccount> userAccountLiveData(){
+    public LiveData<UserAccount> userAccountLiveData() {
         return userAccount;
     }
 
@@ -40,11 +49,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     private boolean validUsername(String username) {
-        if(username.matches(".+@.+\\..+")) return true;
+        if (username.matches(".+@.+\\..+")) return true;
         return username.matches("[0-9]{11}");
-    }
-
-    public void loadPreference(Context context) {
-        userAccount.setValue(loginRepository.loadPreference(context));
     }
 }
